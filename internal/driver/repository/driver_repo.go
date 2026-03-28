@@ -12,7 +12,7 @@ type sqlDriverRepository struct {
 	db *sql.DB
 }
 
-func NewSqlDriverRepository(db *sql.DB) domain.DriverRepository {
+func NewSQLDriverRepository(db *sql.DB) domain.DriverRepository {
 	return &sqlDriverRepository{
 		db: db,
 	}
@@ -25,8 +25,8 @@ func (r *sqlDriverRepository) Create(ctx context.Context, driver *domain.Driver)
 		RETURNING id, created_at, updated_at
 	`
 	return r.db.QueryRowContext(
-		ctx, query, 
-		driver.UserID, driver.PlateNumber, driver.VehicleType, 
+		ctx, query,
+		driver.UserID, driver.PlateNumber, driver.VehicleType,
 		driver.VehicleColor, driver.LicenseNumber, domain.DriverStatusInactive,
 	).Scan(&driver.ID, &driver.CreatedAt, &driver.UpdatedAt)
 }
@@ -59,11 +59,18 @@ func (r *sqlDriverRepository) FindByID(ctx context.Context, id string) (*domain.
 	return driver, err
 }
 
-func (r *sqlDriverRepository) FindByUserID(ctx context.Context, userID string) (*domain.Driver, error) {
+func (r *sqlDriverRepository) FindByUserID(
+	ctx context.Context,
+	userID string,
+) (*domain.Driver, error) {
 	return r.FindByID(ctx, userID)
 }
 
-func (r *sqlDriverRepository) UpdateLocation(ctx context.Context, driverID string, lat, lng float64) error {
+func (r *sqlDriverRepository) UpdateLocation(
+	ctx context.Context,
+	driverID string,
+	lat, lng float64,
+) error {
 	query := `
 		UPDATE drivers 
 		SET current_location = ST_SetSRID(ST_Point($1, $2), 4326), updated_at = now()
@@ -73,7 +80,11 @@ func (r *sqlDriverRepository) UpdateLocation(ctx context.Context, driverID strin
 	return err
 }
 
-func (r *sqlDriverRepository) UpdateStatus(ctx context.Context, driverID string, status domain.DriverStatus) error {
+func (r *sqlDriverRepository) UpdateStatus(
+	ctx context.Context,
+	driverID string,
+	status domain.DriverStatus,
+) error {
 	query := `UPDATE drivers SET status = $1, updated_at = now() WHERE id = $2 OR user_id = $2`
 	_, err := r.db.ExecContext(ctx, query, status, driverID)
 	return err

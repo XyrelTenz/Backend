@@ -11,7 +11,7 @@ type sqlRideRepository struct {
 	db *sql.DB
 }
 
-func NewSqlRideRepository(db *sql.DB) domain.RideRepository {
+func NewSQLRideRepository(db *sql.DB) domain.RideRepository {
 	return &sqlRideRepository{
 		db: db,
 	}
@@ -65,7 +65,10 @@ func (r *sqlRideRepository) FindByID(id string) (*domain.Ride, error) {
 	return ride, err
 }
 
-func (r *sqlRideRepository) FindNearbyAvailable(lat, lng float64, radiusMeter int) ([]*domain.Ride, error) {
+func (r *sqlRideRepository) FindNearbyAvailable(
+	lat, lng float64,
+	radiusMeter int,
+) ([]*domain.Ride, error) {
 	query := `
 		SELECT 
 			id, created_at, pickup_address, ST_Y(pickup_location::geometry), ST_X(pickup_location::geometry),
@@ -139,7 +142,12 @@ func (r *sqlRideRepository) GetPassengerHistory(passengerID string) ([]*domain.R
 	var rides []*domain.Ride
 	for rows.Next() {
 		ride := &domain.Ride{}
-		if err := rows.Scan(&ride.ID, &ride.CreatedAt, &ride.Status, &ride.EstimatedFareAmount); err != nil {
+		if err := rows.Scan(
+			&ride.ID,
+			&ride.CreatedAt,
+			&ride.Status,
+			&ride.EstimatedFareAmount,
+		); err != nil {
 			return nil, err
 		}
 		rides = append(rides, ride)
@@ -158,7 +166,12 @@ func (r *sqlRideRepository) GetDriverHistory(driverID string) ([]*domain.Ride, e
 	var rides []*domain.Ride
 	for rows.Next() {
 		ride := &domain.Ride{}
-		if err := rows.Scan(&ride.ID, &ride.CreatedAt, &ride.Status, &ride.EstimatedFareAmount); err != nil {
+		if err := rows.Scan(
+			&ride.ID,
+			&ride.CreatedAt,
+			&ride.Status,
+			&ride.EstimatedFareAmount,
+		); err != nil {
 			return nil, err
 		}
 		rides = append(rides, ride)

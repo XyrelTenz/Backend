@@ -35,24 +35,24 @@ func NewRouter(cfg *config.Config, db *sql.DB) *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(middleware.SecurityMiddleware())
 
-	// Rate Limiting (100 requests per minute per IP)
+	// Rate Limiting
 	limiter := middleware.NewIPRateLimiter(rate.Every(time.Minute), 100)
 	r.Use(middleware.RateLimitMiddleware(limiter))
 
 	// WebSocket Hub
 	hub := chat_ws.NewHub()
 
-	// 1. Repositories
-	userRepo := auth_repo.NewSqlUserRepository(db)
-	driverRepo := driver_repo.NewSqlDriverRepository(db)
-	rideRepo := passenger_repo.NewSqlRideRepository(db)
-	interactionRepo := passenger_repo.NewSqlInteractionRepository(db)
-	chatRepo := chat_repo.NewSqlChatRepository(db)
+	// Repositories
+	userRepo := auth_repo.NewSQLUserRepository(db)
+	driverRepo := driver_repo.NewSQLDriverRepository(db)
+	rideRepo := passenger_repo.NewSQLRideRepository(db)
+	interactionRepo := passenger_repo.NewSQLInteractionRepository(db)
+	chatRepo := chat_repo.NewSQLChatRepository(db)
 
-	// 2. JWT Service (Infrastructure)
+	// JWT Service (Infrastructure)
 	jwtService := auth_service.NewJWTService(cfg.Auth.JWTSecret)
 
-	// 3. Usecases
+	// Usecases
 	// Auth
 	signupUC := auth_usecase.NewSignupUsecase(userRepo, driverRepo, jwtService)
 	loginUC := auth_usecase.NewLoginUsecase(userRepo, jwtService)
@@ -74,7 +74,7 @@ func NewRouter(cfg *config.Config, db *sql.DB) *gin.Engine {
 	sendMessageUC := chat_usecase.NewSendMessageUsecase(chatRepo, hub)
 	getChatHistoryUC := chat_usecase.NewGetChatHistoryUsecase(chatRepo)
 
-	// 4. Controllers (Adapters)
+	// Controllers (Adapters)
 	authC := auth_delivery.NewAuthController(signupUC, loginUC)
 	passengerC := passenger_delivery.NewPassengerController(
 		requestRideUC,
