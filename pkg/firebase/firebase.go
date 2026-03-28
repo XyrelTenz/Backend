@@ -25,27 +25,33 @@ func (a *App) VerifyIDToken(ctx context.Context, idToken string) (*auth.Token, e
 func InitFirebase(cfg *config.Config) (*App, error) {
 	ctx := context.Background()
 
-	// Reconstruct JSON for the SDK
-	sa := map[string]string{
-		"type":                        cfg.Firebase.Type,
-		"project_id":                  cfg.Firebase.ProjectID,
-		"private_key_id":              cfg.Firebase.PrivateKeyID,
-		"private_key":                 cfg.Firebase.PrivateKey,
-		"client_email":                cfg.Firebase.ClientEmail,
-		"client_id":                   cfg.Firebase.ClientID,
-		"auth_uri":                    cfg.Firebase.AuthURI,
-		"token_uri":                   cfg.Firebase.TokenURI,
-		"auth_provider_x509_cert_url": cfg.Firebase.AuthProviderCertURL,
-		"client_x509_cert_url":        cfg.Firebase.ClientX509CertURL,
-		"universe_domain":             cfg.Firebase.UniverseDomain,
+	var opt option.ClientOption
+	if cfg.RawJSON != "" {
+		// Use raw JSON if provided (recommended for Render)
+		opt = option.WithCredentialsJSON([]byte(cfg.RawJSON))
+	} else {
+		// Reconstruct JSON for the SDK (local folder fallback)
+		sa := map[string]string{
+			"type":                        cfg.Firebase.Type,
+			"project_id":                  cfg.Firebase.ProjectID,
+			"private_key_id":              cfg.Firebase.PrivateKeyID,
+			"private_key":                 cfg.Firebase.PrivateKey,
+			"client_email":                cfg.Firebase.ClientEmail,
+			"client_id":                   cfg.Firebase.ClientID,
+			"auth_uri":                    cfg.Firebase.AuthURI,
+			"token_uri":                   cfg.Firebase.TokenURI,
+			"auth_provider_x509_cert_url": cfg.Firebase.AuthProviderCertURL,
+			"client_x509_cert_url":        cfg.Firebase.ClientX509CertURL,
+			"universe_domain":             cfg.Firebase.UniverseDomain,
+		}
+
+		saJSON, err := json.Marshal(sa)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling service account: %v", err)
+		}
+		opt = option.WithCredentialsJSON(saJSON)
 	}
 
-	saJSON, err := json.Marshal(sa)
-	if err != nil {
-		return nil, fmt.Errorf("error marshaling service account: %v", err)
-	}
-
-	opt := option.WithCredentialsJSON(saJSON)
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		return nil, fmt.Errorf("error initializing app: %v", err)

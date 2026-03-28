@@ -23,7 +23,8 @@ type Config struct {
 		ClientX509CertURL      string
 		UniverseDomain         string
 	}
-	Server struct {
+	RawJSON string
+	Server  struct {
 		Port string
 	}
 }
@@ -54,6 +55,7 @@ func LoadConfig() *Config {
 	// Support for single JSON string (easier for Render)
 	serviceAccountJSON := getEnv("FIREBASE_SERVICE_ACCOUNT_JSON", "")
 	if serviceAccountJSON != "" {
+		cfg.RawJSON = serviceAccountJSON
 		var sa map[string]string
 		if err := json.Unmarshal([]byte(serviceAccountJSON), &sa); err == nil {
 			cfg.Firebase.Type = sa["type"]
