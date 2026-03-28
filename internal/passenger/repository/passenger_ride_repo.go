@@ -100,11 +100,12 @@ func (r *sqlRideRepository) FindNearbyAvailable(
 
 func (r *sqlRideRepository) UpdateStatus(id string, status domain.RideStatus) error {
 	var query string
-	if status == domain.RideStatusCompleted {
+	switch status {
+	case domain.RideStatusCompleted:
 		query = `UPDATE rides SET status = $1, completed_at = now(), payment_status = 'paid' WHERE id = $2`
-	} else if status == domain.RideStatusCancelled {
+	case domain.RideStatusCancelled:
 		query = `UPDATE rides SET status = $1, cancelled_at = now() WHERE id = $2`
-	} else {
+	default:
 		query = `UPDATE rides SET status = $1, updated_at = now() WHERE id = $2`
 	}
 	_, err := r.db.Exec(query, status, id)
