@@ -29,7 +29,10 @@ func (s *Server) Start() error {
 	// Setup Router
 	r := NewRouter(s.firebaseApp)
 
-	addr := ":8080"
+	// Get port from configuration
+	port := s.cfg.Server.Port
+	addr := ":" + port
+	
 	log.Printf("Server starting on %s", addr)
 	return r.Run(addr)
 }

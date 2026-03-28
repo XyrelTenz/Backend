@@ -22,6 +22,9 @@ type Config struct {
 		ClientX509CertURL      string
 		UniverseDomain         string
 	}
+	Server struct {
+		Port string
+	}
 }
 
 func LoadConfig() *Config {
@@ -46,6 +49,8 @@ func LoadConfig() *Config {
 	cfg.Firebase.AuthProviderCertURL = getEnv("FIREBASE_AUTH_CERT_URL", "")
 	cfg.Firebase.ClientX509CertURL = getEnv("FIREBASE_CLIENT_CERT_URL", "")
 	cfg.Firebase.UniverseDomain = getEnv("FIREBASE_UNIVERSE_DOMAIN", "")
+
+	cfg.Server.Port = getEnv("PORT", "8080")
 
 	return cfg
 }
