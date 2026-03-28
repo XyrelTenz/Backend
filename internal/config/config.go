@@ -50,9 +50,31 @@ func LoadConfig() *Config {
 	cfg.Firebase.ClientX509CertURL = getEnv("FIREBASE_CLIENT_CERT_URL", "")
 	cfg.Firebase.UniverseDomain = getEnv("FIREBASE_UNIVERSE_DOMAIN", "")
 
-	cfg.Server.Port = getEnv("PORT", "8080")
+	checkRequiredFields(cfg)
 
 	return cfg
+}
+
+func (c *Config) GetEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
+
+func checkRequiredFields(cfg *Config) {
+	required := map[string]string{
+		"FIREBASE_TYPE":           cfg.Firebase.Type,
+		"FIREBASE_PROJECT_ID":     cfg.Firebase.ProjectID,
+		"FIREBASE_PRIVATE_KEY":    cfg.Firebase.PrivateKey,
+		"FIREBASE_CLIENT_EMAIL":   cfg.Firebase.ClientEmail,
+	}
+
+	for key, val := range required {
+		if val == "" {
+			log.Printf("WARNING: Environment variable %s is missing or empty!", key)
+		}
+	}
 }
 
 func getEnv(key, fallback string) string {
