@@ -14,7 +14,7 @@ type sqlUserRepository struct {
 	db *sql.DB
 }
 
-func NewSqlUserRepository(db *sql.DB) domain.UserRepository {
+func NewSQLUserRepository(db *sql.DB) domain.UserRepository {
 	return &sqlUserRepository{
 		db: db,
 	}
@@ -36,18 +36,20 @@ func (r *sqlUserRepository) Create(ctx context.Context, user *domain.User) error
 			VALUES ($1, $2, $3, $4, $5)
 			RETURNING id, created_at, updated_at
 		`
-		err = tx.QueryRowContext(ctx, query, user.Email, user.Phone, user.FullName, user.Role, user.PasswordHash).Scan(
-			&user.ID, &user.CreatedAt, &user.UpdatedAt,
-		)
+		err = tx.QueryRowContext(ctx, query, user.Email, user.Phone, user.FullName, user.Role, user.PasswordHash).
+			Scan(
+				&user.ID, &user.CreatedAt, &user.UpdatedAt,
+			)
 	} else {
 		query := `
 			INSERT INTO users (id, email, phone, full_name, role, password_hash)
 			VALUES ($1, $2, $3, $4, $5)
 			RETURNING created_at, updated_at
 		`
-		err = tx.QueryRowContext(ctx, query, user.ID, user.Email, user.Phone, user.FullName, user.Role, user.PasswordHash).Scan(
-			&user.CreatedAt, &user.UpdatedAt,
-		)
+		err = tx.QueryRowContext(ctx, query, user.ID, user.Email, user.Phone, user.FullName, user.Role, user.PasswordHash).
+			Scan(
+				&user.CreatedAt, &user.UpdatedAt,
+			)
 	}
 
 	if err != nil {

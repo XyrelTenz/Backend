@@ -11,7 +11,7 @@ type sqlChatRepository struct {
 	db *sql.DB
 }
 
-func NewSqlChatRepository(db *sql.DB) domain.ChatRepository {
+func NewSQLChatRepository(db *sql.DB) domain.ChatRepository {
 	return &sqlChatRepository{
 		db: db,
 	}
@@ -23,10 +23,14 @@ func (r *sqlChatRepository) Create(ctx context.Context, msg *domain.ChatMessage)
 		VALUES ($1, $2, $3)
 		RETURNING id, created_at
 	`
-	return r.db.QueryRowContext(ctx, query, msg.RideID, msg.SenderID, msg.Message).Scan(&msg.ID, &msg.CreatedAt)
+	return r.db.QueryRowContext(ctx, query, msg.RideID, msg.SenderID, msg.Message).
+		Scan(&msg.ID, &msg.CreatedAt)
 }
 
-func (r *sqlChatRepository) GetByRideID(ctx context.Context, rideID string) ([]*domain.ChatMessage, error) {
+func (r *sqlChatRepository) GetByRideID(
+	ctx context.Context,
+	rideID string,
+) ([]*domain.ChatMessage, error) {
 	query := `
 		SELECT id, ride_id, sender_id, message, created_at
 		FROM chat_messages WHERE ride_id = $1 ORDER BY created_at ASC

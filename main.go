@@ -13,13 +13,11 @@ import (
 )
 
 func main() {
-	// Initialize logger
 	logger.InitLogger()
 	defer logger.Log.Sync()
 
 	cfg := config.LoadConfig()
 
-	// Connect to Database
 	db, err := sql.Open("pgx", cfg.Database.URL)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
@@ -32,7 +30,6 @@ func main() {
 
 	app := server.NewServer(cfg, db)
 
-	// Run Server
 	if err := app.Run(); err != nil {
 		logger.Log.Fatal("Server failed to start", zap.Error(err))
 	}

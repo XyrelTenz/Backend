@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	auth_delivery "backend/internal/auth/delivery/http"
-	"backend/internal/auth/service"
+	auth_service "backend/internal/auth/service"
 	"backend/internal/auth/usecase"
 	"backend/internal/domain"
 	"backend/pkg/response"
@@ -57,15 +57,26 @@ func (m *MockDriverRepository) FindByID(ctx context.Context, id string) (*domain
 	return nil, nil
 }
 
-func (m *MockDriverRepository) FindByUserID(ctx context.Context, id string) (*domain.Driver, error) {
+func (m *MockDriverRepository) FindByUserID(
+	ctx context.Context,
+	id string,
+) (*domain.Driver, error) {
 	return nil, nil
 }
 
-func (m *MockDriverRepository) UpdateLocation(ctx context.Context, id string, lat, lng float64) error {
+func (m *MockDriverRepository) UpdateLocation(
+	ctx context.Context,
+	id string,
+	lat, lng float64,
+) error {
 	return nil
 }
 
-func (m *MockDriverRepository) UpdateStatus(ctx context.Context, id string, s domain.DriverStatus) error {
+func (m *MockDriverRepository) UpdateStatus(
+	ctx context.Context,
+	id string,
+	s domain.DriverStatus,
+) error {
 	return nil
 }
 
@@ -95,10 +106,10 @@ func TestAuthIntegration(t *testing.T) {
 		r.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		
+
 		var resp response.Response
 		json.Unmarshal(w.Body.Bytes(), &resp)
-		
+
 		assert.True(t, resp.Success)
 		data := resp.Data.(map[string]interface{})
 		assert.NotEmpty(t, data["token"])

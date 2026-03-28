@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"backend/internal/domain"
 	"backend/internal/driver/delivery/http/dto"
 	"backend/internal/driver/usecase"
 	"backend/pkg/response"
@@ -53,7 +52,11 @@ func (h *DriverController) UpdateStatus(c *gin.Context) {
 		return
 	}
 
-	if err := h.updateRideStatusUsecase.Execute(c.Request.Context(), rideID, req.Status); err != nil {
+	if err := h.updateRideStatusUsecase.Execute(
+		c.Request.Context(),
+		rideID,
+		req.Status,
+	); err != nil {
 		response.Error(c, http.StatusInternalServerError, "Failed to update status: "+err.Error())
 		return
 	}
@@ -95,7 +98,12 @@ func (h *DriverController) UpdateLocation(c *gin.Context) {
 	}
 
 	userID := c.GetString("user_id")
-	if err := h.updateLocationUsecase.Execute(c.Request.Context(), userID, req.Lat, req.Lng); err != nil {
+	if err := h.updateLocationUsecase.Execute(
+		c.Request.Context(),
+		userID,
+		req.Lat,
+		req.Lng,
+	); err != nil {
 		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}

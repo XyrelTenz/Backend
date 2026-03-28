@@ -9,8 +9,6 @@ import (
 	"testing"
 
 	"backend/internal/domain"
-	passenger_handler "backend/internal/passenger/handler"
-	passenger_service "backend/internal/passenger/service"
 	"backend/pkg/response"
 
 	"github.com/gin-gonic/gin"
@@ -35,7 +33,10 @@ func (m *MockDriverRepository) FindByID(ctx context.Context, id string) (*domain
 	return args.Get(0).(*domain.Driver), args.Error(1)
 }
 
-func (m *MockDriverRepository) FindByUserID(ctx context.Context, userID string) (*domain.Driver, error) {
+func (m *MockDriverRepository) FindByUserID(
+	ctx context.Context,
+	userID string,
+) (*domain.Driver, error) {
 	args := m.Called(ctx, userID)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -43,12 +44,20 @@ func (m *MockDriverRepository) FindByUserID(ctx context.Context, userID string) 
 	return args.Get(0).(*domain.Driver), args.Error(1)
 }
 
-func (m *MockDriverRepository) UpdateLocation(ctx context.Context, id string, lat, lng float64) error {
+func (m *MockDriverRepository) UpdateLocation(
+	ctx context.Context,
+	id string,
+	lat, lng float64,
+) error {
 	args := m.Called(ctx, id, lat, lng)
 	return args.Error(0)
 }
 
-func (m *MockDriverRepository) UpdateStatus(ctx context.Context, id string, status domain.DriverStatus) error {
+func (m *MockDriverRepository) UpdateStatus(
+	ctx context.Context,
+	id string,
+	status domain.DriverStatus,
+) error {
 	args := m.Called(ctx, id, status)
 	return args.Error(0)
 }
@@ -109,11 +118,17 @@ type MockInteractionRepository struct {
 	mock.Mock
 }
 
-func (m *MockInteractionRepository) AddSavedPlace(ctx context.Context, place *domain.SavedPlace) error {
+func (m *MockInteractionRepository) AddSavedPlace(
+	ctx context.Context,
+	place *domain.SavedPlace,
+) error {
 	return nil
 }
 
-func (m *MockInteractionRepository) GetSavedPlaces(ctx context.Context, userID string) ([]*domain.SavedPlace, error) {
+func (m *MockInteractionRepository) GetSavedPlaces(
+	ctx context.Context,
+	userID string,
+) ([]*domain.SavedPlace, error) {
 	return nil, nil
 }
 
@@ -125,21 +140,31 @@ func (m *MockInteractionRepository) AddRating(ctx context.Context, rating *domai
 	return nil
 }
 
-func (m *MockInteractionRepository) GetAverageRating(ctx context.Context, userID string) (float64, error) {
+func (m *MockInteractionRepository) GetAverageRating(
+	ctx context.Context,
+	userID string,
+) (float64, error) {
 	return 4.5, nil
 }
 
-func (m *MockInteractionRepository) CreateNotification(ctx context.Context, n *domain.Notification) error {
+func (m *MockInteractionRepository) CreateNotification(
+	ctx context.Context,
+	n *domain.Notification,
+) error {
 	return nil
 }
 
-func (m *MockInteractionRepository) GetUserNotifications(ctx context.Context, userID string) ([]*domain.Notification, error) {
+func (m *MockInteractionRepository) GetUserNotifications(
+	ctx context.Context,
+	userID string,
+) ([]*domain.Notification, error) {
 	return nil, nil
 }
 
 func TestRideIntegration(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
+	//TODO: Will Fix this test later, since the fare calculation is now more complex and relies on external services, we need to mock those services as well to get a consistent fare estimate for testing. For now, this test will just check that a ride can be requested and that the response contains an estimated fare and the correct status.
 	t.Run("Request Ride and Calculate Fare", func(t *testing.T) {
 		mockRideRepo := new(MockRideRepository)
 		mockInteractionRepo := new(MockInteractionRepository)
@@ -154,16 +179,16 @@ func TestRideIntegration(t *testing.T) {
 		r.POST("/rides/request", rideHandler.Request)
 
 		rideInput := gin.H{
-			"pickup_address":   "Pagadian City",
-			"pickup_lat":       7.82,
-			"pickup_lng":       123.43,
-			"dropoff_address":  "Airport",
-			"dropoff_lat":      7.82,
-			"dropoff_lng":      123.48,
-			"vehicle_type":     "MotoTaxi",
-			"payment_method":   "Cash",
+			"pickup_address":  "Pagadian City",
+			"pickup_lat":      7.82,
+			"pickup_lng":      123.43,
+			"dropoff_address": "Airport",
+			"dropoff_lat":     7.82,
+			"dropoff_lng":     123.48,
+			"vehicle_type":    "MotoTaxi",
+			"payment_method":  "Cash",
 		}
-		
+
 		mockRideRepo.On("Create", mock.Anything).Return(nil)
 
 		body, _ := json.Marshal(rideInput)
@@ -173,13 +198,13 @@ func TestRideIntegration(t *testing.T) {
 		r.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusCreated, w.Code)
-		
+
 		var resp response.Response
 		json.Unmarshal(w.Body.Bytes(), &resp)
-		
+
 		assert.True(t, resp.Success)
 		rideData := resp.Data.(map[string]interface{})
-		assert.GreaterOrEqual(t, rideData["estimated_fare_amount"], 1.0) // Relaxed check for mock
+		assert.GreaterOrEqual(t, rideData["estimated_fare_amount"], 1.0)
 		assert.Equal(t, "requested", string(rideData["status"].(string)))
 	})
 }
