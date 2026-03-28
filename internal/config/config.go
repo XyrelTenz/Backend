@@ -59,7 +59,7 @@ func LoadConfig() *Config {
 			cfg.Firebase.Type = sa["type"]
 			cfg.Firebase.ProjectID = sa["project_id"]
 			cfg.Firebase.PrivateKeyID = sa["private_key_id"]
-			cfg.Firebase.PrivateKey = sa["private_key"]
+			cfg.Firebase.PrivateKey = cleanPrivateKey(sa["private_key"])
 			cfg.Firebase.ClientEmail = sa["client_email"]
 			cfg.Firebase.ClientID = sa["client_id"]
 			cfg.Firebase.AuthURI = sa["auth_uri"]
@@ -68,11 +68,21 @@ func LoadConfig() *Config {
 			cfg.Firebase.ClientX509CertURL = sa["client_x509_cert_url"]
 			cfg.Firebase.UniverseDomain = sa["universe_domain"]
 		}
+	} else {
+		// If not using JSON, ensure the individual PRIVATE_KEY is also cleaned
+		cfg.Firebase.PrivateKey = cleanPrivateKey(cfg.Firebase.PrivateKey)
 	}
 
 	checkRequiredFields(cfg)
 
 	return cfg
+}
+
+func cleanPrivateKey(key string) string {
+	// Remove accidental leading/trailing quotes
+	key = strings.Trim(key, "\"")
+	// Convert literal \n to actual newlines
+	return strings.ReplaceAll(key, "\\n", "\n")
 }
 
 func (c *Config) GetEnv(key, fallback string) string {
