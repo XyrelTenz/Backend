@@ -1,9 +1,9 @@
 services:
   - type: web
     name: backend
-    env: docker
-    plan: free # Render's free tier
-    region: oregon # Default region
+    env: go
+    plan: free
+    region: oregon
     buildCommand: go build -o app ./cmd/main.go
     startCommand: ./app
     envVars:
