@@ -55,6 +55,10 @@ func LoadConfig() *Config {
 	// Support for single JSON string (easier for Render)
 	serviceAccountJSON := getEnv("FIREBASE_SERVICE_ACCOUNT_JSON", "")
 	if serviceAccountJSON != "" {
+		// Aggressively clean the JSON string
+		serviceAccountJSON = strings.TrimSpace(serviceAccountJSON)
+		serviceAccountJSON = strings.Trim(serviceAccountJSON, "\"'") // Trim both " and '
+		
 		cfg.RawJSON = serviceAccountJSON
 		var sa map[string]string
 		if err := json.Unmarshal([]byte(serviceAccountJSON), &sa); err == nil {
