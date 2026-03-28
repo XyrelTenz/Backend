@@ -4,7 +4,8 @@ services:
     env: docker
     plan: free # Render's free tier
     region: oregon # Default region
-    dockerCommand: ./main
+    buildCommand: go build -o app ./cmd/main.go
+    startCommand: ./app
     envVars:
       - key: PORT
         value: 8080 # Default port for Render web services
