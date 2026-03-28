@@ -1,38 +1,37 @@
 package server
 
 import (
-	"backend/internal/config"
-	"backend/pkg/firebase"
-	"fmt"
+	"context"
+	"database/sql"
 	"log"
+	"net/http"
+
+	"backend/internal/config"
 )
 
 type Server struct {
-	cfg         *config.Config
-	firebaseApp *firebase.App
+	httpServer *http.Server
+	cfg        *config.Config
+	db         *sql.DB
 }
 
-func NewServer(cfg *config.Config) *Server {
+func NewServer(cfg *config.Config, db *sql.DB) *Server {
 	return &Server{
 		cfg: cfg,
+		db:  db,
 	}
 }
 
-func (s *Server) Start() error {
-	// Initialize Firebase
-	firebaseApp, err := firebase.InitFirebase(s.cfg)
-	if err != nil {
-		return fmt.Errorf("failed to initialize Firebase: %v", err)
+func (s *Server) Run() error {
+	router := NewRouter(s.cfg, s.db)
+	s.httpServer = &http.Server{
+		Addr:    ":" + s.cfg.Server.Port,
+		Handler: router,
 	}
-	s.firebaseApp = firebaseApp
+	log.Printf("Server starting on port %s", s.cfg.Server.Port)
+	return s.httpServer.ListenAndServe()
+}
 
-	// Setup Router
-	r := NewRouter(s.firebaseApp)
-
-	// Get port from configuration
-	port := s.cfg.Server.Port
-	addr := ":" + port
-	
-	log.Printf("Server starting on %s", addr)
-	return r.Run(addr)
+func (s *Server) Shutdown(ctx context.Context) error {
+	return s.httpServer.Shutdown(ctx)
 }

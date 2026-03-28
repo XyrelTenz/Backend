@@ -1,16 +1,39 @@
 package main
 
 import (
+	"database/sql"
+	"log"
+
 	"backend/internal/config"
 	"backend/internal/server"
-	"log"
+	"backend/pkg/logger"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
+	"go.uber.org/zap"
 )
 
 func main() {
+	// Initialize logger
+	logger.InitLogger()
+	defer logger.Log.Sync()
+
 	cfg := config.LoadConfig()
 
-	srv := server.NewServer(cfg)
-	if err := srv.Start(); err != nil {
-		log.Fatalf("Server failed to start: %v", err)
+	// Connect to Database
+	db, err := sql.Open("pgx", cfg.Database.URL)
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	if err := db.Ping(); err != nil {
+		log.Fatalf("Failed to ping database: %v", err)
+	}
+
+	app := server.NewServer(cfg, db)
+
+	// Run Server
+	if err := app.Run(); err != nil {
+		logger.Log.Fatal("Server failed to start", zap.Error(err))
 	}
 }
