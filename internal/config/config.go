@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 	"strings"
@@ -49,6 +50,25 @@ func LoadConfig() *Config {
 	cfg.Firebase.AuthProviderCertURL = getEnv("FIREBASE_AUTH_CERT_URL", "")
 	cfg.Firebase.ClientX509CertURL = getEnv("FIREBASE_CLIENT_CERT_URL", "")
 	cfg.Firebase.UniverseDomain = getEnv("FIREBASE_UNIVERSE_DOMAIN", "")
+
+	// Support for single JSON string (easier for Render)
+	serviceAccountJSON := getEnv("FIREBASE_SERVICE_ACCOUNT_JSON", "")
+	if serviceAccountJSON != "" {
+		var sa map[string]string
+		if err := json.Unmarshal([]byte(serviceAccountJSON), &sa); err == nil {
+			cfg.Firebase.Type = sa["type"]
+			cfg.Firebase.ProjectID = sa["project_id"]
+			cfg.Firebase.PrivateKeyID = sa["private_key_id"]
+			cfg.Firebase.PrivateKey = sa["private_key"]
+			cfg.Firebase.ClientEmail = sa["client_email"]
+			cfg.Firebase.ClientID = sa["client_id"]
+			cfg.Firebase.AuthURI = sa["auth_uri"]
+			cfg.Firebase.TokenURI = sa["token_uri"]
+			cfg.Firebase.AuthProviderCertURL = sa["auth_provider_x509_cert_url"]
+			cfg.Firebase.ClientX509CertURL = sa["client_x509_cert_url"]
+			cfg.Firebase.UniverseDomain = sa["universe_domain"]
+		}
+	}
 
 	checkRequiredFields(cfg)
 
