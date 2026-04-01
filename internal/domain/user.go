@@ -16,29 +16,29 @@ const (
 )
 
 type User struct {
-	ID           string     `json:"id"`
-	Email         string     `json:"email"`
-	Phone         string     `json:"phone"`
-	FullName      string     `json:"full_name"`
-	Role          UserRole   `json:"role"`
-	IsActive      bool       `json:"is_active"`
-	PasswordHash string     `json:"-"`
-	CreatedAt    time.Time  `json:"created_at"`
-	UpdatedAt    time.Time  `json:"updated_at"`
-	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
-	LastSeenAt   *time.Time `json:"last_seen_at,omitempty"`
+	ID           string       `json:"id"`
+	Email        string       `json:"email"`
+	Phone        string       `json:"phone"`
+	FullName     string       `json:"full_name"`
+	Role         UserRole     `json:"role"`
+	IsActive     bool         `json:"is_active"`
+	PasswordHash string       `json:"-"`
+	CreatedAt    time.Time    `json:"created_at"`
+	UpdatedAt    time.Time    `json:"updated_at"`
+	DeletedAt    *time.Time   `json:"deleted_at,omitempty"`
+	LastSeenAt   *time.Time   `json:"last_seen_at,omitempty"`
 	Profile      *UserProfile `json:"profile,omitempty"`
 }
 
 type UserProfile struct {
-	UserID               string  `json:"user_id"`
-	ProfileImageURL      string  `json:"profile_image_url"`
-	Country              string  `json:"country"`
-	Address              string  `json:"address"`
-	DOB                  string  `json:"dob"` // Use string for Date (YYYY-MM-DD)
-	AverageRating        float64 `json:"average_rating"`
-	TotalTripsCompleted  int     `json:"total_trips_completed"`
-	UpdatedAt            time.Time `json:"updated_at"`
+	UserID              string    `json:"user_id"`
+	ProfileImageURL     string    `json:"profile_image_url"`
+	Country             string    `json:"country"`
+	Address             string    `json:"address"`
+	DOB                 string    `json:"dob"` // Use string for Date (YYYY-MM-DD)
+	AverageRating       float64   `json:"average_rating"`
+	TotalTripsCompleted int       `json:"total_trips_completed"`
+	UpdatedAt           time.Time `json:"updated_at"`
 }
 
 func (u *User) HashPassword(password string) error {

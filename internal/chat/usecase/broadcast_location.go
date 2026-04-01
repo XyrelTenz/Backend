@@ -3,7 +3,7 @@ package usecase
 import (
 	"time"
 
-	"backend/internal/chat/ws"
+	chat_ws "backend/internal/chat/ws"
 )
 
 type BroadcastLocationUsecase interface {

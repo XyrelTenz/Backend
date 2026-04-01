@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"backend/internal/chat/ws"
+	chat_ws "backend/internal/chat/ws"
 	"backend/internal/domain"
 )
 
@@ -24,7 +24,10 @@ func NewSendMessageUsecase(repo domain.ChatRepository, hub *chat_ws.Hub) SendMes
 	}
 }
 
-func (u *sendMessageUsecase) Execute(ctx context.Context, rideID, senderID, content string) (*domain.ChatMessage, error) {
+func (u *sendMessageUsecase) Execute(
+	ctx context.Context,
+	rideID, senderID, content string,
+) (*domain.ChatMessage, error) {
 	msg := &domain.ChatMessage{
 		RideID:   rideID,
 		SenderID: senderID,

@@ -8,11 +8,11 @@ import (
 type SavedPlace struct {
 	ID        string    `json:"id"`
 	UserID    string    `json:"user_id"`
-	Name      string    `json:"name"` // Label (e.g. My Home, Work)
+	Name      string    `json:"name"`
 	Address   string    `json:"address"`
 	Lat       float64   `json:"lat"`
 	Lng       float64   `json:"lng"`
-	Type      string    `json:"type"` // e.g. home, work, other
+	Type      string    `json:"type"`
 	CreatedAt time.Time `json:"created_at"`
 }
 

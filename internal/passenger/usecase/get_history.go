@@ -20,6 +20,9 @@ func NewGetPassengerHistoryUsecase(rideRepo domain.RideRepository) GetPassengerH
 	}
 }
 
-func (u *getPassengerHistoryUsecase) Execute(ctx context.Context, passengerID string) ([]*domain.Ride, error) {
+func (u *getPassengerHistoryUsecase) Execute(
+	ctx context.Context,
+	passengerID string,
+) ([]*domain.Ride, error) {
 	return u.rideRepo.GetPassengerHistory(passengerID)
 }

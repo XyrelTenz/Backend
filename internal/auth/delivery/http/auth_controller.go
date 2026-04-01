@@ -16,7 +16,10 @@ type AuthController struct {
 	loginUsecase  usecase.LoginUsecase
 }
 
-func NewAuthController(signupUsecase usecase.SignupUsecase, loginUsecase usecase.LoginUsecase) *AuthController {
+func NewAuthController(
+	signupUsecase usecase.SignupUsecase,
+	loginUsecase usecase.LoginUsecase,
+) *AuthController {
 	return &AuthController{
 		signupUsecase: signupUsecase,
 		loginUsecase:  loginUsecase,

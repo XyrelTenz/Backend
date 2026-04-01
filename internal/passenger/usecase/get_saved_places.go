@@ -20,6 +20,9 @@ func NewGetSavedPlacesUsecase(interactionRepo domain.InteractionRepository) GetS
 	}
 }
 
-func (u *getSavedPlacesUsecase) Execute(ctx context.Context, userID string) ([]*domain.SavedPlace, error) {
+func (u *getSavedPlacesUsecase) Execute(
+	ctx context.Context,
+	userID string,
+) ([]*domain.SavedPlace, error) {
 	return u.interactionRepo.GetSavedPlaces(ctx, userID)
 }

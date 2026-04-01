@@ -32,7 +32,10 @@ func NewRequestRideUsecase(rideRepo domain.RideRepository) RequestRideUsecase {
 	}
 }
 
-func (u *requestRideUsecase) Execute(ctx context.Context, input RequestRideInput) (*domain.Ride, error) {
+func (u *requestRideUsecase) Execute(
+	ctx context.Context,
+	input RequestRideInput,
+) (*domain.Ride, error) {
 	ride := &domain.Ride{
 		PassengerID:    input.PassengerID,
 		PickupAddress:  input.PickupAddress,

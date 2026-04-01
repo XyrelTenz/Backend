@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"backend/internal/auth/service"
+	auth_service "backend/internal/auth/service"
 	"backend/internal/domain"
 )
 
@@ -29,7 +29,11 @@ type signupUsecase struct {
 	jwtService auth_service.JWTService
 }
 
-func NewSignupUsecase(userRepo domain.UserRepository, driverRepo domain.DriverRepository, jwtService auth_service.JWTService) SignupUsecase {
+func NewSignupUsecase(
+	userRepo domain.UserRepository,
+	driverRepo domain.DriverRepository,
+	jwtService auth_service.JWTService,
+) SignupUsecase {
 	return &signupUsecase{
 		userRepo:   userRepo,
 		driverRepo: driverRepo,

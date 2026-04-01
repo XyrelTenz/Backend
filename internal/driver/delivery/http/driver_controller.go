@@ -65,7 +65,6 @@ func (h *DriverController) UpdateStatus(c *gin.Context) {
 }
 
 func (h *DriverController) GetNearby(c *gin.Context) {
-	// In a real app, these would come from the request params or current location
 	lat := 7.8285
 	lng := 123.4344
 

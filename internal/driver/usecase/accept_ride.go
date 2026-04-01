@@ -16,7 +16,10 @@ type acceptRideUsecase struct {
 	driverRepo domain.DriverRepository
 }
 
-func NewAcceptRideUsecase(rideRepo domain.RideRepository, driverRepo domain.DriverRepository) AcceptRideUsecase {
+func NewAcceptRideUsecase(
+	rideRepo domain.RideRepository,
+	driverRepo domain.DriverRepository,
+) AcceptRideUsecase {
 	return &acceptRideUsecase{
 		rideRepo:   rideRepo,
 		driverRepo: driverRepo,

@@ -24,7 +24,7 @@ func SecurityMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Security Headers (OWASP)
+		// Security Headers
 		c.Writer.Header().Set("X-Content-Type-Options", "nosniff")
 		c.Writer.Header().Set("X-Frame-Options", "DENY")
 		c.Writer.Header().Set("X-XSS-Protection", "1; mode=block")
@@ -65,6 +65,7 @@ func (i *IPRateLimiter) GetLimiter(ip string) *rate.Limiter {
 	return limiter
 }
 
+// RateLimitMiddleware applies rate limiting based on client IP address.
 func RateLimitMiddleware(limiter *IPRateLimiter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ip := c.ClientIP()

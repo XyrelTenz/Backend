@@ -20,6 +20,9 @@ func NewGetChatHistoryUsecase(repo domain.ChatRepository) GetChatHistoryUsecase 
 	}
 }
 
-func (u *getChatHistoryUsecase) Execute(ctx context.Context, rideID string) ([]*domain.ChatMessage, error) {
+func (u *getChatHistoryUsecase) Execute(
+	ctx context.Context,
+	rideID string,
+) ([]*domain.ChatMessage, error) {
 	return u.repo.GetByRideID(ctx, rideID)
 }

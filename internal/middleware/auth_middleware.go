@@ -3,7 +3,7 @@ package middleware
 import (
 	"strings"
 
-	"backend/internal/auth/service"
+	auth_service "backend/internal/auth/service"
 	"backend/pkg/response"
 
 	"github.com/gin-gonic/gin"

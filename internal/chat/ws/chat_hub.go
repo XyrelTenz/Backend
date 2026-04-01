@@ -46,7 +46,7 @@ func (h *Hub) Unregister(c *Client) {
 func (h *Hub) Broadcast(rideID string, msg interface{}) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
-	
+
 	payload, _ := json.Marshal(msg)
 	clients := h.clients[rideID]
 	for _, client := range clients {

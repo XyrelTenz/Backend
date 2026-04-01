@@ -13,7 +13,14 @@ type Response struct {
 	Errors  interface{} `json:"errors,omitempty"`
 }
 
-func JSON(c *gin.Context, status int, success bool, message string, data interface{}, errs interface{}) {
+func JSON(
+	c *gin.Context,
+	status int,
+	success bool,
+	message string,
+	data interface{},
+	errs interface{},
+) {
 	c.JSON(status, Response{
 		Success: success,
 		Message: message,

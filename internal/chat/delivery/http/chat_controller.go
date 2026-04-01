@@ -6,7 +6,7 @@ import (
 
 	"backend/internal/chat/delivery/http/dto"
 	"backend/internal/chat/usecase"
-	"backend/internal/chat/ws"
+	chat_ws "backend/internal/chat/ws"
 	"backend/pkg/response"
 
 	"github.com/gin-gonic/gin"

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"backend/internal/auth/service"
+	auth_service "backend/internal/auth/service"
 	"backend/internal/domain"
 )
 
@@ -17,7 +17,10 @@ type loginUsecase struct {
 	jwtService auth_service.JWTService
 }
 
-func NewLoginUsecase(userRepo domain.UserRepository, jwtService auth_service.JWTService) LoginUsecase {
+func NewLoginUsecase(
+	userRepo domain.UserRepository,
+	jwtService auth_service.JWTService,
+) LoginUsecase {
 	return &loginUsecase{
 		userRepo:   userRepo,
 		jwtService: jwtService,
